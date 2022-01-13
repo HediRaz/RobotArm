@@ -3,7 +3,7 @@ from comm import sendPosToArduino
 
 class Servo():
 
-    def __init__(self, idx, pos_buffer_size=5):
+    def __init__(self, idx, pos_buffer_size=20):
         """
         Servo class
         pos_buffer is to avoid making sudden movements

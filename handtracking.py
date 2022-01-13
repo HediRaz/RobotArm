@@ -10,8 +10,8 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 arm = RobotArm()
-env = Emulation()  # None when using the arm
-# env = None
+# env = Emulation()  # None when using the arm
+env = None
 
 
 def get_coordinates_from_results(results, idx):
@@ -83,7 +83,10 @@ def _angle_pipeline3(results):
 
 
 def _angle_pipeline4(results):
-    return 90
+    coords1 = get_coordinates_from_results(results, 5)
+    coords2 = get_coordinates_from_results(results, 17)
+    v12 = coords_to_vec(coords1, coords2)
+    return -45 + 2*compute_angle(v12, (0, -1, 0))
 
 
 def _angle_pipeline5(results):
@@ -130,6 +133,8 @@ def draw_annotations(image, results):
 
 def hand_tracking():
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 256)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)
 
     with mp_hands.Hands(
         model_complexity=0,
