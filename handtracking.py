@@ -110,10 +110,10 @@ def update_pos(results, env=None):
         arm.update_pos(4, _angle_pipeline4(results))
         arm.update_pos(5, _angle_pipeline5(results))
 
-        arm.send_pos(env)
+    arm.send_pos(env)
 
-        if env is not None:
-            env.update_plot()
+    if env is not None:
+        env.update_plot()
 
 
 def draw_annotations(image, results):

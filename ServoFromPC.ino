@@ -1,11 +1,13 @@
 #include <Servo.h>
 
+bool initialised = false;
+
 const int nbServo = 6;  // nb of servo
 Servo myServo[nbServo];
 byte servoPin[nbServo] = {3, 5, 6, 9, 10, 11};  // servo pin
 int servoMinPos[nbServo] = {-360, -360, -360, -360, -360, -360};  // min angle
 int servoMaxPos[nbServo] = {360, 360, 360, 360, 360, 360};  // max angle
-int servoPos[nbServo] = {0, 0, 0, 0, 0, 0};  // current positions wanted
+int servoPos[nbServo] = {90, 90, 90, 90, 90, 45};  // current positions wanted
 
 
 const byte buffSize = 30;
@@ -103,8 +105,18 @@ void setup() {
   Serial.println("<Arduino is ready>");
 }
 
+void setup2() {
+  for (int i = 0; i < nbServo; i++){
+    myServo[i].write(servoPos[i]);
+  }
+  initialised = true;
+}
+
 
 void loop() {
+  if (not initialised) {
+    setup2();
+  }
   curMillis = millis();
   getDataFromPC();
   updatePosition();
