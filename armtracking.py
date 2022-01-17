@@ -11,6 +11,8 @@ mp_pose = mp.solutions.pose
 mp_hands = mp.solutions.hands
 
 arm = RobotArm()
+# env = Emulation() 
+env = None
 
 
 def get_coordinates_from_pose_results(results, idx):
@@ -60,7 +62,7 @@ def _angle_pipeline1(pose_results, hand_results):
     v2 = coords_to_vec(coords1, coords3)
     n1 = norm(v1)
     n2 = norm(v2)
-    return (n1 / n2) * 45
+    return (n1 / n2) * 40
 
 
 def _angle_pipeline2(pose_results, hand_results):
@@ -81,7 +83,7 @@ def _angle_pipeline3(pose_results, hand_results):
     coords4 = get_coordinates_from_pose_results(pose_results, 15)
     v12 = coords_to_vec(coords1, coords2)
     v34 = coords_to_vec(coords3, coords4)
-    sign = 1 if coords2[1] > coords1[1] else -1
+    sign = 1 if v12[1] > v34[1] else -1
     return 180 - (90 + sign * compute_angle(v12, v34))
 
 
@@ -89,7 +91,8 @@ def _angle_pipeline4(pose_results, hand_results):
     coords1 = get_coordinates_from_hand_results(hand_results, 5)
     coords2 = get_coordinates_from_hand_results(hand_results, 17)
     v12 = coords_to_vec(coords1, coords2)
-    return -45 + 2*compute_angle(v12, (0, -1, 0))
+    sign = (coords1[1]-coords2[1])/abs(coords1[1]-coords2[1])
+    return 90 + sign*compute_angle((v12[0], v12[1], 0), (1, 0, 0))
 
 
 def _angle_pipeline5(pose_results, hand_results):
@@ -143,7 +146,6 @@ def draw_annotations(image, pose_results, hand_results):
 
 
 def arm_tracking():
-    env = Emulation()
     cap = cv2.VideoCapture(0)
     # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
     # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)

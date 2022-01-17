@@ -10,7 +10,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 arm = RobotArm()
-# env = Emulation()  # None when using the arm
+# env = Emulation()
 env = None
 
 
@@ -86,7 +86,8 @@ def _angle_pipeline4(results):
     coords1 = get_coordinates_from_results(results, 5)
     coords2 = get_coordinates_from_results(results, 17)
     v12 = coords_to_vec(coords1, coords2)
-    return -45 + 2*compute_angle(v12, (0, -1, 0))
+    sign = (coords1[1]-coords2[1])/abs(coords1[1]-coords2[1])
+    return 90 + sign*compute_angle((v12[0], v12[1], 0), (1, 0, 0))
 
 
 def _angle_pipeline5(results):
@@ -147,8 +148,8 @@ def hand_tracking():
             if not success:
                 raise ValueError("Empty camera frame")
 
-            image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image.flags.writeable = False
             results = hands.process(image)
 
             # Compute angles and send them to Arduino
