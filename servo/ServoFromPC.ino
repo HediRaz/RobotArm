@@ -2,6 +2,7 @@
 
 bool initialised = false;
 
+// This is the configuration for a robot arm 6DOF
 const int nbServo = 6;  // nb of servo
 Servo myServo[nbServo];
 byte servoPin[nbServo] = {3, 5, 6, 9, 10, 11};  // servo pin
@@ -50,7 +51,7 @@ void getDataFromPC() {
   }
 }
 
- 
+
 void parseData() {
   // One type of message is accepted : <newPos0,newPos1,newPos2...>
 
@@ -83,10 +84,6 @@ void updatePosition() {
       messageServoPos[i] = max(messageServoPos[i], servoMinPos[i]);
       messageServoPos[i] = min(messageServoPos[i], servoMaxPos[i]);
       myServo[i].write(messageServoPos[i]);
-
-      // if (servoPos[i] != messageServoPos[i]) {
-      //   servoPos[i] = messageServoPos[i];
-      // }
     }
   }
 }
@@ -102,10 +99,11 @@ void setup() {
   }
   
     // tell the PC we are ready
-  Serial.println("<Arduino is ready>");
+  Serial.println("<Msg: Arduino is ready>");
 }
 
 void setup2() {
+  // I don't know why but sometimes the first setup does not work
   for (int i = 0; i < nbServo; i++){
     myServo[i].write(servoPos[i]);
   }
@@ -114,6 +112,7 @@ void setup2() {
 
 
 void loop() {
+  // Main loop
   if (not initialised) {
     setup2();
   }

@@ -1,4 +1,6 @@
-from comm import sendPosToArduino
+# Usefull classes to simply control servos with Python
+# The RobootArm class has been especially designed to control the robot arm in the HubIA of CentraleSupélec
+from servo.comm import sendPosToArduino
 
 
 class Servo():
@@ -15,6 +17,12 @@ class Servo():
         self.pos_buffer = [0] * pos_buffer_size
 
     def update_pos(self, pos, smooth=True):
+        """ Update the position of the servo
+        Args:
+        pos (int): new position of the servo
+        smooth (bool): if True, the position is updated by averaging the last
+
+        """
         if smooth:
             self.pos_buffer.pop(0)
             self.pos_buffer.append(pos)
@@ -25,12 +33,13 @@ class Servo():
 
 class RobotArm():
 
-    def __init__(self):
+    def __init__(self, pos_buffer_size=20):
         """
-        Our robot has 5 motors
+        Create a RobotArm object with 6 servos designed for the HubIA of CentraleSupélec
 
         """
-        self.servos = [Servo(i) for i in range(6)]
+        self.pos_buffer_size = pos_buffer_size
+        self.servos = [Servo(i, pos_buffer_size=pos_buffer_size) for i in range(6)]
         self.servos[5] = Servo(5, 3)
         self.servos[0].update_pos(90, smooth=False)  # at bottom
         self.servos[1].update_pos(90, smooth=False)  # first arm
@@ -75,9 +84,20 @@ class RobotArm():
         self.servos[5].pos_buffer[-1] = min(90, self.servos[5].pos_buffer[-1])
 
     def update_pos(self, idx, pos, smooth=True):
+        """ Update the position of a servo 
+        Args:
+        idx (int): index of the servo
+        pos (int): new position of the servo
+        smooth (bool): if True, the position is updated by averaging the last
+        """
         self.servos[idx].update_pos(pos, smooth)
 
     def send_pos(self, env=None):
+        """ Send the position of all servos to the Arduino
+        Args:
+        env (optional)(str): environment to send the position to
+                the environnement must have a method update_pos(idx, pos)
+        """
         self.check_pos()
         if env is not None:
             for servo in self.servos:

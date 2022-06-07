@@ -6,13 +6,13 @@ Librairie pour piloter le bras robotique du Hub IA de CentraleSupélec. Dévelop
 
 
 ## Project Architecture
-ServoFromPC.ino is the file that updates the arm position
+ServoFromPC.ino is the file that updates the arm position on the arduino
 
 comm.py gives some useful functions to communicate with the Arduino from your PC
 
-servo.py define the RobotArm class which defines some rules for the arm
+servo.py define the RobotArm class which defines some rules for the arm. The configuratio is specific to the arm I have : 6DOF
 
-emulation.py define the class Emulation that is useful to test your code before actually test it on the arm
+emulation.py provides the class Emulation that is useful to test your code before testing it on the real arm
 
 
 ## Projects
@@ -28,17 +28,14 @@ Contrôler le bras avec son propre bras.
 
 
 ## Installation
-clone le repo github :
+cloner le respo github :
 ```bash
 git clone git@github.com:HediRaz/RobotArm.git
 ```
 
-#### Sur linux / Windows
-Installer les libraries :
+Installer les dépendances :
 ```bash
-pip install typing
-pip install python-opencv
-pip install mediapipe
+pip install -r requirements.txt
 ```
 
 #### Sur raspberry pi
@@ -78,7 +75,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/bin/bash -c 'cd /home/pi/Documents/RobotArm/ && python3 handtracking.py'
+ExecStart=/bin/bash -c 'cd /home/pi/Documents/RobotArm/ && python3 main.py'
 
 [Install]
 WantedBy=multi-user.target

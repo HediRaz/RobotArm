@@ -1,8 +1,8 @@
 import cv2
 import mediapipe as mp
 import math
-from servo import RobotArm
-from emulation import Emulation
+from servo.servo import RobotArm
+from servo.emulation import Emulation
 
 
 mp_drawing = mp.solutions.drawing_utils
@@ -102,7 +102,7 @@ def _angle_pipeline5(results):
     return 130 - 110*(n1/n2)
 
 
-def update_pos(results, env=None):
+def update_pos(arm, results, env=None):
     if results.multi_hand_landmarks:
         arm.update_pos(0, _angle_pipeline0(results))
         arm.update_pos(1, _angle_pipeline1(results))
@@ -132,10 +132,10 @@ def draw_annotations(image, results):
     cv2.imshow('MediaPipe Hands', cv2.flip(image, 1))
 
 
-def hand_tracking():
+def hand_tracking(arm, env=None):
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 256)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 256)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     with mp_hands.Hands(
         model_complexity=0,
@@ -153,7 +153,7 @@ def hand_tracking():
             results = hands.process(image)
 
             # Compute angles and send them to Arduino
-            update_pos(results, env)
+            update_pos(arm, results, env)
 
             # Draw the hand annotations on the image.
             draw_annotations(image, results)
@@ -161,7 +161,3 @@ def hand_tracking():
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         cap.release()
-
-
-if __name__ == "__main__":
-    hand_tracking()

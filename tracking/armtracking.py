@@ -1,8 +1,8 @@
 import cv2
 import mediapipe as mp
 import math
-from servo import RobotArm
-from emulation import Emulation
+from servo.servo import RobotArm
+from servo.emulation import Emulation
 
 
 mp_drawing = mp.solutions.drawing_utils

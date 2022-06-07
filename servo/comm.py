@@ -1,17 +1,23 @@
+# Esteblish the connection between the Arduino and the computer
 import serial
+import serial.tools.list_ports
 from typing import Union
 
 
-port_name = "COM3"  # On Windows
-baud_rate = 9600
-try:
-    ser = serial.Serial(port_name, baud_rate)
-    SERIAL_OPEN = True
-    print("Serial port " + port_name + " opened")
-    print("Baudrate : " + str(baud_rate) + " Bd")
-except Exception:
+BAUD_RATE = 9600
+SERIAL_OPEN = False
+for p in serial.tools.list_ports.comports():
+    if "Arduino" in p[1]:
+        SERIAL_OPEN = True
+        PORT_NAME = p[0]
+        ser = serial.Serial(PORT_NAME, BAUD_RATE)
+        SERIAL_OPEN = True
+        print("Serial port " + PORT_NAME + " opened")
+        print("Baudrate : " + str(BAUD_RATE) + " Bd")
+        break
+else:
     SERIAL_OPEN = False
-    print("WARNING: unable to open port "+port_name)
+    print("WARNING: unable to find Arduino")
 
 
 START_MARKER = ord('<')
@@ -23,7 +29,8 @@ def with_serial(func):
         if SERIAL_OPEN:
             return func(*args)
         else:
-            print("WARNING: no connection with Arduino")
+            pass
+            # print("WARNING: no connection with Arduino")
     return func_wrapper
 
 

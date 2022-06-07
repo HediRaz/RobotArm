@@ -1,8 +1,9 @@
+# Emulation to see what the hand would be doing if connected. 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 from math import cos, sin, pi
 
-from servo import RobotArm
+from servo.servo import RobotArm
 
 
 PI_180 = pi / 180
@@ -14,18 +15,17 @@ L3 = .8
 class Emulation():
 
     def __init__(self):
-        # Servo pos
+        # Servo positions
         self.servo_pos = [0] * 6
 
-        # For the plot
+        # Some variables for the plot
         self.main_angle = 0
         self.x = [0] * 4
         self.y = [0] * 4
         self.clamp_angle = 0
 
-        # Init figures
+        # Initialize the plot
         plt.ion()
-        # fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(1, 3)
         _, axd = plt.subplot_mosaic([["upper left", "right"],
                                     ["middle", "right"],
                                     ["lower left", "right"]],
@@ -48,9 +48,11 @@ class Emulation():
         self.ax3_rectangle = patches.Rectangle((-.5, -.1), .5, .2, color="black")
 
     def update_pos(self, idx, pos):
+        """ Update position of servo idx to pos """
         self.servo_pos[idx] = pos
 
     def update_plot(self):
+        """ Update the plot """
         self.main_angle = 180 - self.servo_pos[0]
 
         angle1 = PI_180*self.servo_pos[1]
@@ -121,7 +123,7 @@ class Emulation():
         plt.pause(0.0005)
 
 
-if __name__ == "__main__":
+def main():
     env = Emulation()
     arm = RobotArm()
 
