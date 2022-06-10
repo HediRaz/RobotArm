@@ -10,10 +10,6 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 mp_hands = mp.solutions.hands
 
-arm = RobotArm()
-# env = Emulation() 
-env = None
-
 
 def get_coordinates_from_pose_results(results, idx):
     x = results.pose_landmarks.landmark[idx].x
@@ -107,7 +103,7 @@ def _angle_pipeline5(pose_results, hand_results):
     return 120 - (n1/n2)*110
 
 
-def update_pos(pose_results, hand_results, env=None):
+def update_pos(arm, pose_results, hand_results, env=None):
     if pose_results.pose_landmarks:
         arm.update_pos(0, _angle_pipeline0(pose_results, hand_results))
         arm.update_pos(1, _angle_pipeline1(pose_results, hand_results))
@@ -145,7 +141,7 @@ def draw_annotations(image, pose_results, hand_results):
     cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
 
 
-def arm_tracking():
+def arm_tracking(arm, env=None):
     cap = cv2.VideoCapture(0)
     # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1024)
     # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1024)
@@ -171,7 +167,7 @@ def arm_tracking():
             hand_results = hands.process(image)
 
             # Compute angles and send them to Arduino
-            update_pos(pose_results, hand_results, env)
+            update_pos(arm, pose_results, hand_results, env)
 
             # Draw the hand annotations on the image.
             draw_annotations(image, pose_results, hand_results)
@@ -179,7 +175,3 @@ def arm_tracking():
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         cap.release()
-
-
-if __name__ == "__main__":
-    arm_tracking()
